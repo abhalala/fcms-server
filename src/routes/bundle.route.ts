@@ -224,7 +224,7 @@ bundleRouter.get("/print/:layout/:uid", async (req, res) => {
 
     if (!currBundle) return res.json({ print: 0 });
     console.log(currBundle.po_no);
-    fetch("http://${process.env.HOST}/bt/printLabel", {
+    fetch(`http://${process.env.HOST}/bt/printLabel`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
