@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Bundle {
+  sr_no       String   @unique
+  uid         String   @id @default(cuid())
+  weight      Float
+  quantity    Int
+  length      Float
+  cast_id     String?
+  created_at  DateTime @default(now())
+  modified_at DateTime @updatedAt
+  section     Variant  @relation(fields: [vs_no], references: [s_no])
+  vs_no       String
+  po_no       String?
+  loction     Int      @default(0)
+  status      Status?  @default(STOCK)
+}
+
+model soldBundle {
+  sr_no       String   @unique
+  uid         String   @id
+  weight      Float
+  quantity    Int
+  length      Float
+  cast_id     String?
+  created_at  DateTime
+  modified_at DateTime @updatedAt
+  section     Variant  @relation(fields: [vs_no], references: [s_no])
+  vs_no       String
+  po_no       String?
+  loction     Int      @default(404)
+  status      Status?  @default(SOLD)
+  reference   String?  @default("no ref")
+}
+
+model Variant {
+  id           Int          @id @default(autoincrement())
+  s_no         String       @unique
+  name         String?      @default("unassigned")
+  series       String?      @default("unassigned")
+  print_series String?      @default("unassigned")
+  length       Float
+  breadth      Float
+  thickness    Float?       @default(0)
+  leg          Float?       @default(0)
+  range        String       @default("{\"start\":0,\"end\":0}")
+  bundles      Bundle[]
+  soldBundle   soldBundle[]
+}
+
+enum Status {
+  STOCK
+  ORDERED
+  SOLD
+  RETURNED
+}
