@@ -1,7 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 
-// import data from "./data.json";
-
 const prisma = new PrismaClient();
 
 // data.forEach(async (variant) => {

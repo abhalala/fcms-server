@@ -1,11 +1,12 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import { bundleRouter, variantRouter, moveRouter } from "./routes";
 import cors from "cors";
 import { promises as fs } from "fs";
 import path from "path";
+import dotenv from "dotenv";
 
-const prisma = new PrismaClient();
+dotenv.config();
+
 const app = express();
 const PORT = 3000;
 
@@ -13,13 +14,13 @@ app.use(express.json({}));
 app.use(
   express.urlencoded({
     extended: true,
-  })
+  }),
 );
 
 app.use(
   cors({
     origin: "*",
-  })
+  }),
 );
 
 app.get("/api", (_req, res) => {
@@ -32,7 +33,7 @@ app.use("/api/variant", variantRouter);
 app.use("/api", moveRouter);
 
 const initializeBundleNumber = async () => {
-  const bundleFilePath = path.join(__dirname, "currentBundleNo");
+  const bundleFilePath = path.join(__dirname, "..", "..", "currentBundleNo");
   try {
     await fs.access(bundleFilePath);
   } catch {
@@ -44,5 +45,5 @@ const initializeBundleNumber = async () => {
 
 const server = app.listen(PORT, async () => {
   await initializeBundleNumber();
-  console.log(`🚀 Server ready at: http://localhost:${PORT}`);
+  console.log(`🚀 Server ready at: http://${process.env.HOST}:${PORT}`);
 });

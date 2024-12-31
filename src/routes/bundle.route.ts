@@ -18,7 +18,7 @@ async function getStateFromFile(filePath: string): Promise<string> {
 
 async function setStateToFile(
   filePath: string,
-  newState: string
+  newState: string,
 ): Promise<void> {
   try {
     await fs.writeFile(filePath, newState, { encoding: "utf8" });
@@ -27,7 +27,13 @@ async function setStateToFile(
   }
 }
 
-const filePath: string = path.join(__dirname, "..", "currentBundleNo");
+const filePath: string = path.join(
+  __dirname,
+  "..",
+  "..",
+  "..",
+  "currentBundleNo",
+);
 
 bundleRouter.get("/current-number", async (_req, res) => {
   try {
@@ -44,7 +50,7 @@ bundleRouter.post("/set-number", async (req, res) => {
     if (!newNumber || isNaN(parseInt(newNumber))) {
       return res.status(400).json({ error: "Invalid bundle number" });
     }
-    
+
     await setStateToFile(filePath, newNumber.toString());
     res.json({ success: true, newNumber });
   } catch (error) {
@@ -97,7 +103,7 @@ bundleRouter.post("/create", async (req, res) => {
         loction,
       },
     })
-    .catch((err) => {
+    .catch((err: any) => {
       res.send(JSON.stringify({ err }));
     });
 
@@ -132,14 +138,14 @@ bundleRouter.get("/:uid", async (req, res) => {
       },
     })
     .then(
-      (bundle) => {
+      (bundle: any) => {
         res.json(bundle);
       },
-      (reject) => {
+      (reject: any) => {
         res.json({ rejection: reject });
-      }
+      },
     )
-    .catch((err) => {
+    .catch((err: any) => {
       res.json({ err });
     });
 });
@@ -181,14 +187,14 @@ bundleRouter.put("/modify/:uid", async (req, res) => {
         where: { uid },
       })
       .then(
-        (modifiedBundle) => {
+        (modifiedBundle: any) => {
           res.json(modifiedBundle);
         },
-        (reject) => {
+        (reject: any) => {
           res.json({ rejection: reject });
-        }
+        },
       )
-      .catch((err) => {
+      .catch((err: any) => {
         res.json({ err });
       });
   }
@@ -202,7 +208,7 @@ bundleRouter.get("/print/:layout/:uid", async (req, res) => {
 
   if (l == 0) {
     await generateLabel(uid, 0);
-    fetch("http://10.0.0.88/bt/printLabel", {
+    fetch(`http://${process.env.HOST}/bt/printLabel`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -218,7 +224,7 @@ bundleRouter.get("/print/:layout/:uid", async (req, res) => {
 
     if (!currBundle) return res.json({ print: 0 });
     console.log(currBundle.po_no);
-    fetch("http://10.0.0.88/bt/printLabel", {
+    fetch("http://${process.env.HOST}/bt/printLabel", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -228,7 +234,7 @@ bundleRouter.get("/print/:layout/:uid", async (req, res) => {
         layout: l,
         weight: `${currBundle.weight.toFixed(3)}`,
         weight_each: `${(currBundle.weight / currBundle.quantity).toPrecision(
-          3
+          3,
         )}`,
         weight12ft: `${(
           (currBundle.weight / currBundle.quantity / currBundle.length) *
