@@ -26,6 +26,7 @@ COPY --from=build /app/prisma ./prisma
 COPY --from=dependencies /app/node_modules ./node_modules
 
 RUN npx prisma generate
+RUN mkdir /app/data && touch /app/data/currentBundleNo
 
 EXPOSE 3000
 

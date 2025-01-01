@@ -32,6 +32,7 @@ const filePath: string = path.join(
   "..",
   "..",
   "..",
+  "data",
   "currentBundleNo",
 );
 

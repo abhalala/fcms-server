@@ -33,12 +33,20 @@ app.use("/api/variant", variantRouter);
 app.use("/api", moveRouter);
 
 const initializeBundleNumber = async () => {
-  const bundleFilePath = path.join(__dirname, "..", "..", "currentBundleNo");
+  const bundleFilePath = path.join(
+    __dirname,
+    "..",
+    "..",
+    "data",
+    "currentBundleNo",
+  );
   try {
     await fs.access(bundleFilePath);
   } catch {
     // File doesn't exist, create it with initial value
-    await fs.writeFile(bundleFilePath, "1", { encoding: "utf8" });
+    await fs
+      .writeFile(bundleFilePath, "1", { encoding: "utf8" })
+      .catch((err) => console.error(err));
     console.log("Initialized bundle number file with value: 1");
   }
 };
