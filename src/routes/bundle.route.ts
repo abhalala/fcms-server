@@ -118,7 +118,7 @@ bundleRouter.post("/create", async (req, res) => {
 bundleRouter.get("/recents", async (_req, res) => {
   const recentBundles = await prisma.bundle.findMany({
     orderBy: {
-      sr_no: "desc",
+      created_at: "desc",
     },
   });
   res.json({ recentBundles });
