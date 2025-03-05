@@ -85,7 +85,8 @@ bundleRouter.post("/create", async (req, res) => {
     "K",
     "L",
   ];
-  const bundle_number: string = `${[
+  const twoDigitYear = String(new Date().getFullYear() % 100).padStart(2, '0');
+  const bundle_number: string = `${twoDigitYear}${[
     prefix_bundle_number[month],
   ]}${currentState}`;
   console.info(`Current State : ${currentState}`);
