@@ -65,5 +65,5 @@ COPY logo.png* ./
 EXPOSE 3000
 
 # Run with Bun using optimized Bun-native server
-# Falls back to Express version if needed: CMD ["bun", "dist/src/index.js"]
-CMD ["bun", "dist/src/index.bun.js"]
+# Matches the built output (dist/src/index.js as seen in the image)
+CMD ["bun", "dist/src/index.js"]
