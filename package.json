@@ -30,9 +30,15 @@
     "ts-node": "^10.9.1"
   },
   "scripts": {
-    "dev": "ts-node-dev ./src/index.ts",
-    "start": "ts-node ./src/index.ts",
+    "dev": "bun --watch ./src/index.bun.ts",
+    "dev:express": "bun --watch ./src/index.ts",
+    "dev:node": "ts-node-dev ./src/index.ts",
+    "start": "bun ./src/index.bun.ts",
+    "start:express": "bun ./src/index.ts",
+    "start:node": "ts-node ./src/index.ts",
+    "build": "tsc && bun build ./src/index.bun.ts --outdir ./dist-bun --target node && cp -r dist-bun/* dist/src/ && rm -rf dist-bun",
     "studio": "prisma studio",
-    "generate": "prisma generate"
+    "generate": "prisma generate",
+    "test": "bun test"
   }
 }
