@@ -53,8 +53,8 @@ variantRouter.get("/all", async (req, res) => {
   const variants = await prisma.variant.findMany({
     select: {
       s_no: true,
-	  series: true,
-	  range: true,
+      series: true,
+      range: true,
     },
   });
   
