@@ -1,5 +1,5 @@
 import express from "express";
-import { bundleRouter, variantRouter, moveRouter } from "./routes";
+import { bundleRouter, variantRouter, moveRouter, dieMutationRouter } from "./routes";
 import cors from "cors";
 import { promises as fs } from "fs";
 import path from "path";
@@ -31,6 +31,7 @@ app.get("/api", (_req, res) => {
 app.use("/api/bundle", bundleRouter);
 app.use("/api/variant", variantRouter);
 app.use("/api", moveRouter);
+app.use("/api/die-mutation", dieMutationRouter);
 
 const initializeBundleNumber = async () => {
   const bundleFilePath = path.join(
