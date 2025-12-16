@@ -1,9 +1,25 @@
-import Canvas from "canvas";
 import fs from "fs";
 import qr from "qrcode";
 import { prisma } from "../../prisma";
 
+// Lazy load canvas only when needed (for Bun compatibility)
+let Canvas: any = null;
+const loadCanvas = async () => {
+  if (!Canvas) {
+    try {
+      Canvas = await import("canvas");
+      return Canvas.default || Canvas;
+    } catch (error) {
+      console.error("Canvas module not available. Label generation will not work.");
+      throw new Error("Canvas module required for label generation is not available");
+    }
+  }
+  return Canvas;
+};
+
 const generateLabel = async (uid: string, layout: 0 | 1 = 0) => {
+  // Load canvas dynamically
+  const CanvasModule = await loadCanvas();
   const currentBundle = await prisma.bundle.findUnique({
     where: {
       uid,
@@ -20,7 +36,7 @@ const generateLabel = async (uid: string, layout: 0 | 1 = 0) => {
   let x = 0;
   let y = 0;
   let text;
-  const canvas = Canvas.createCanvas(609, 812);
+  const canvas = CanvasModule.createCanvas(609, 812);
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -33,7 +49,7 @@ const generateLabel = async (uid: string, layout: 0 | 1 = 0) => {
     margin: 1,
     errorCorrectionLevel: "H",
   });
-  const qrcode = await Canvas.loadImage(currentQr);
+  const qrcode = await CanvasModule.loadImage(currentQr);
   ctx.fillStyle = "black";
   ctx.fillRect(6, 6, qrcode.width + 6, qrcode.height + 6);
   x = 9;
@@ -44,7 +60,7 @@ const generateLabel = async (uid: string, layout: 0 | 1 = 0) => {
 
   // LAYOUT LOGIC
   if (layout == 0) {
-    const logo = await Canvas.loadImage("./logo.png");
+    const logo = await CanvasModule.loadImage("./logo.png");
     ctx.drawImage(logo, 21 + qrcode.width, 12, 75 * 5, 80);
 
     // BOX FOR BUNDLE NUMBER
