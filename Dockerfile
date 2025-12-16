@@ -50,8 +50,9 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/prisma ./prisma
 COPY --from=dependencies /app/node_modules ./node_modules
 
-# Generate Prisma client in production environment
-RUN bun run prisma generate
+# Copy the generated Prisma client from the build stage instead of regenerating
+COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=build /app/node_modules/@prisma/client ./node_modules/@prisma/client
 
 # Create data directory for bundle numbers
 RUN mkdir -p /app/data && touch /app/data/currentBundleNo
