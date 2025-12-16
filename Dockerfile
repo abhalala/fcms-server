@@ -21,8 +21,8 @@ RUN apt-get update && apt-get install -y \
 FROM base AS dependencies
 
 COPY package.json yarn.lock ./
-# Use yarn for better native module support
-RUN yarn install --frozen-lockfile
+# Use bun install for dependency installation
+RUN bun install --frozen-lockfile
 
 # Build stage
 FROM base AS build
@@ -31,10 +31,10 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
 # Generate Prisma client
-RUN yarn prisma generate
+RUN bun run prisma generate
 
 # Compile TypeScript
-RUN yarn tsc
+RUN bun run tsc
 
 # Production stage
 FROM base AS deploy
@@ -51,7 +51,7 @@ COPY --from=build /app/prisma ./prisma
 COPY --from=dependencies /app/node_modules ./node_modules
 
 # Generate Prisma client in production environment
-RUN yarn prisma generate
+RUN bun run prisma generate
 
 # Create data directory for bundle numbers
 RUN mkdir -p /app/data && touch /app/data/currentBundleNo
@@ -60,7 +60,7 @@ RUN mkdir -p /app/data && touch /app/data/currentBundleNo
 RUN mkdir -p /app/cache
 
 # Copy logo if exists (for label generation)
-COPY logo.png ./logo.png 2>/dev/null || true
+COPY logo.png* ./
 
 EXPOSE 3000
 
