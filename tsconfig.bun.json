@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "esnext",
+    "types": ["bun-types"]
+  },
+  "include": [
+    "src/**/*.bun.ts",
+    "src/routes-bun/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

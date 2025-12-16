@@ -3,18 +3,18 @@ import qr from "qrcode";
 import { prisma } from "../../prisma";
 
 // Lazy load canvas only when needed (for Bun compatibility)
-let Canvas: any = null;
+let CanvasModule: any = null;
 const loadCanvas = async () => {
-  if (!Canvas) {
+  if (!CanvasModule) {
     try {
-      Canvas = await import("canvas");
-      return Canvas.default || Canvas;
+      const imported = await import("canvas");
+      CanvasModule = imported.default || imported;
     } catch (error) {
       console.error("Canvas module not available. Label generation will not work.");
       throw new Error("Canvas module required for label generation is not available");
     }
   }
-  return Canvas;
+  return CanvasModule;
 };
 
 const generateLabel = async (uid: string, layout: 0 | 1 = 0) => {

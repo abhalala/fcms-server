@@ -164,12 +164,12 @@ export async function handleBundleRoutes(
 
       if (layout === 0) {
         await generateLabel(uid, 0);
-        // Use Bun's fetch (optimized)
+        // Use Bun's fetch (optimized) - fire and forget with error handling
         fetch(`http://${process.env.HOST}/bt/printLabel`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ uid: `${uid}.png`, layout: 0 }),
-        });
+        }).catch((err) => console.error("Print label request failed:", err));
       } else {
         let currBundle = await prisma.bundle.findUnique({
           where: { uid: uid },
@@ -180,6 +180,7 @@ export async function handleBundleRoutes(
           return jsonResponse({ print: 0 });
         }
 
+        // Fire and forget print request with error handling
         fetch(`http://${process.env.HOST}/bt/printLabel`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -195,7 +196,7 @@ export async function handleBundleRoutes(
             series: currBundle.section.print_series,
             po: `${currBundle.po_no}`,
           }),
-        });
+        }).catch((err) => console.error("Print label request failed:", err));
       }
 
       return jsonResponse({ print: 1 });
