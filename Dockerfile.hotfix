@@ -1,0 +1,8 @@
+# Hotfix image (2026-11-20).
+# The full Dockerfile no longer builds: Debian 11 packages moved to
+# archive.debian.org, and canvas 2.11.2 has no prebuilt binary for Bun 1.1.30
+# (its source-build fallback crashes). Until that is sorted out, reuse the last
+# good image and replace only the compiled JavaScript.
+#   bunx tsc -p tsconfig.json && docker build -f Dockerfile.hotfix -t fcms-server:hotfix-YYYYMMDD .
+FROM ghcr.io/abhalala/fcms-server@sha256:cd1faf6a4cf42fd7cc9e1aeb23c70ff80fd35059387a86d81b1f68e7cb476331
+COPY dist /app/dist
