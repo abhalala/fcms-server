@@ -7,6 +7,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+// A single bad request must never take the whole plant system down.
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled rejection:", reason);
+});
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught exception:", err);
+});
+
 const app = express();
 const PORT = 3000;
 
@@ -32,6 +40,11 @@ app.use("/api/bundle", bundleRouter);
 app.use("/api/variant", variantRouter);
 app.use("/api", moveRouter);
 app.use("/api/die-mutation", dieMutationRouter);
+
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error("Request failed:", err?.message ?? err);
+  if (!res.headersSent) res.status(500).json({ err: "server_error" });
+});
 
 const initializeBundleNumber = async () => {
   const bundleFilePath = path.join(

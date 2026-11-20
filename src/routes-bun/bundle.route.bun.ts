@@ -69,7 +69,7 @@ export async function handleBundleRoutes(
           weight,
           vs_no,
           cast_id,
-          po_no: po_no.toUpperCase(),
+          po_no: po_no ? String(po_no).trim().toUpperCase() || null : null,
           loction,
         },
       });
@@ -143,7 +143,7 @@ export async function handleBundleRoutes(
           weight,
           vs_no,
           cast_id,
-          po_no: po_no.toUpperCase(),
+          po_no: po_no ? String(po_no).trim().toUpperCase() || null : null,
           loction,
         },
         where: { uid },
@@ -194,7 +194,7 @@ export async function handleBundleRoutes(
             quantity: currBundle.quantity,
             length: `${currBundle.length.toFixed(3)}`,
             series: currBundle.section.print_series,
-            po: `${currBundle.po_no}`,
+            po: currBundle.po_no ?? "",
           }),
         }).catch((err) => console.error("Print label request failed:", err));
       }
