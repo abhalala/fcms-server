@@ -3,8 +3,13 @@ FROM oven/bun:1.1.30-debian AS base
 
 WORKDIR /app
 
+# Debian 11 (bullseye) left the main mirrors in 2026; its packages now live on
+# archive.debian.org. Point apt there so the image still builds.
+RUN printf 'deb http://archive.debian.org/debian bullseye main\ndeb http://archive.debian.org/debian-security bullseye-security main\n' > /etc/apt/sources.list \
+    && rm -f /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources
+
 # Install system dependencies required for canvas and Prisma
-RUN apt-get update && apt-get install -y \
+RUN apt-get -o Acquire::Check-Valid-Until=false update && apt-get install -y \
     build-essential \
     libcairo2-dev \
     libpango1.0-dev \
